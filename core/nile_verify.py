@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 make_csv = True
-csv_path = Path(__file__).parent.parent / "verification" / "group13.csv"
+csv_path = Path(__file__).parent.parent / "verification" / "paper-implementation.csv"
 
 
 def nile_river_simulation(nu_of_timesteps=240):

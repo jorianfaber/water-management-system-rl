@@ -36,7 +36,7 @@ def generate_evaporation_function(
     ----------
     evap_rates : np.ndarray
         Time-dependent evaporation rate data.
-    storage_to_surface_rel : nd.array
+    storage_to_surface_rel : np.ndarray
         Storage to surface relationship data
 
     Returns:
