@@ -2,7 +2,7 @@ from watermanagement import WaterManagement
 from graph import Node, Edge
 from reward import Reward
 from gymnasium import spaces
-from utils import (
+from nile_utils import (
     generate_storage_to_release_range_function,
     calculate_power_production,
     storage_to_level,

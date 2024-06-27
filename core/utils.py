@@ -1,6 +1,4 @@
 from typing import Callable, Tuple
-import numpy as np
-from numpy.core.multiarray import interp as compiled_interp
 
 
 def current_timely_value(data: list, timestep: int) -> float:
@@ -49,70 +47,3 @@ def generate_release_range_function_minmax(
         Release range function that takes a dict and returns the specified release range
     """
     return lambda info: (min_release, max_release)
-
-
-def generate_storage_to_release_range_function(storage_to_minmax_rel: np.ndarray):
-    return lambda info: (
-        np.interp(info["volume"], storage_to_minmax_rel[0], storage_to_minmax_rel[1]),
-        np.interp(info["volume"], storage_to_minmax_rel[0], storage_to_minmax_rel[2]),
-    )
-
-
-def generate_evaporation_function(evap_rates, storage_to_surface_rel):
-    return (
-        lambda info: -current_timely_value(evap_rates, info["timestep"])
-        * storage_to_surface(info["volume"], storage_to_surface_rel)
-        / 100
-    )
-
-
-def calculate_power_production(
-    outflow,
-    volume,
-    timestep,
-    efficiency,
-    max_turbine_flow,
-    head_start_level,
-    max_capacity,
-    storage_to_level_rel,
-    operating_hours,
-):
-    M3_TO_KG_FACTOR = 1000
-    W_MW_CONVERSION = 1e-6
-    G = 9.81
-    turbine_flow = min(outflow, max_turbine_flow)
-
-    water_level = storage_to_level(volume, storage_to_level_rel)
-    head = max(0.0, water_level - head_start_level)
-    power_in_mw = min(
-        max_capacity,
-        turbine_flow * head * M3_TO_KG_FACTOR * G * efficiency * W_MW_CONVERSION,
-    )
-    production = power_in_mw * current_timely_value(operating_hours, timestep)
-    return production
-
-
-def modified_interp(x: float, xp: float, fp: float, left=None, right=None) -> float:
-    fp = np.asarray(fp)
-
-    return compiled_interp(x, xp, fp, left, right)
-
-
-def storage_to_level(storage, storage_to_level_rel):
-    return modified_interp(storage, storage_to_level_rel[0], storage_to_level_rel[1])
-
-
-def storage_to_surface(storage, storage_to_surface_rel):
-    return modified_interp(
-        storage, storage_to_surface_rel[0], storage_to_surface_rel[1]
-    )
-
-
-def storage_to_release(storage, storage_to_surface_rel):
-    min_release = np.interp(
-        storage, storage_to_surface_rel[0], storage_to_surface_rel[1]
-    )
-    max_release = np.interp(
-        storage, storage_to_surface_rel[0], storage_to_surface_rel[2]
-    )
-    return (min_release, max_release)

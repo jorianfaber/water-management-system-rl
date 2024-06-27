@@ -3,7 +3,6 @@ from graph import Node, Edge
 from reward import Reward
 from pprint import pprint
 from gymnasium import spaces
-from utils import current_timely_value
 
 dam1 = Node("1", [200, 100, 150], 0, 3000000, 5000000, 1000, [200], 0, False)
 dam2 = Node("2", [], 0, 1000000, 6000000, 1000, [400], 0, True)
